@@ -8,7 +8,7 @@ catch(e) {
   $('.app').hide();
 }
 
-
+var openTab = ["open youtube"] ;
 var noteTextarea = $('#note-textarea');
 var instructions = $('#recording-instructions');
 var notesList = $('ul#notes');
@@ -49,6 +49,31 @@ recognition.onresult = function(event) {
   if(!mobileRepeatBug) {
     noteContent += transcript;
     noteTextarea.val(noteContent);
+  }
+  
+  if(transcript.includes('open YouTube')) {
+    window.open('https://www.youtube.com/','_blank');
+  }
+  else if(transcript.includes('open Facebook')){
+    window.open('https://www.facebook.com/','_blank');
+  }
+  else if(transcript.includes('save note')){
+    recognition.stop();
+
+  if(!noteContent.length) {
+    instructions.text('Could not save empty note. Please add a message to your note.');
+  }
+  else {
+    // Save note to localStorage.
+    // The key is the dateTime with seconds, the value is the content of the note.
+    saveNote(new Date().toLocaleString(), noteContent);
+
+    // Reset variables and update UI.
+    noteContent = '';
+    renderNotes(getAllNotes());
+    noteTextarea.val('');
+    instructions.text('Note saved successfully.');
+  }
   }
 };
 
