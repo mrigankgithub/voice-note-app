@@ -18,6 +18,7 @@ var noteContent = '';
 // Get all notes from previous sessions and display them.
 var notes = getAllNotes();
 renderNotes(notes);
+var greeting = ["Hi Nekita! How are you doing today?","Hi beautiful , You looking gorgeous", "Hi Nikita! Your birthday is coming, I am so excited","Hi Nikita,Mrigank send you hi"]
 
 
 
@@ -57,9 +58,24 @@ recognition.onresult = function(event) {
   else if(transcript.includes('open Facebook')){
     window.open('https://www.facebook.com/','_blank');
   }
+  else if(transcript.includes('hello') || transcript.includes('hi') || transcript.includes("hey")){
+    const newspeech = new SpeechSynthesisUtterance();
+    newspeech.text =greeting[Math.floor(Math.random()*greeting.length)];;
+    newspeech.volume = 1;
+    newspeech.rate = 0;
+    newspeech.pitch = 1;
+    window.speechSynthesis.speak(newspeech);
+  }
+  else if(transcript.includes('how are you?')){
+    const newspeech = new SpeechSynthesisUtterance();
+    newspeech.text ="i am good, call Mrigank right now! , he is waiting for your call";
+    newspeech.volume = 1;
+    newspeech.rate = -1;
+    newspeech.pitch = 1;
+    window.speechSynthesis.speak(newspeech);
+  }
   else if(transcript.includes('save note')){
     recognition.stop();
-
   if(!noteContent.length) {
     instructions.text('Could not save empty note. Please add a message to your note.');
   }
@@ -67,7 +83,6 @@ recognition.onresult = function(event) {
     // Save note to localStorage.
     // The key is the dateTime with seconds, the value is the content of the note.
     saveNote(new Date().toLocaleString(), noteContent);
-
     // Reset variables and update UI.
     noteContent = '';
     renderNotes(getAllNotes());
@@ -76,15 +91,12 @@ recognition.onresult = function(event) {
   }
   }
 };
-
 recognition.onstart = function() { 
   instructions.text('Voice recognition activated. Try speaking into the microphone.');
 }
-
 recognition.onspeechend = function() {
   instructions.text('You were quiet for a while so voice recognition turned itself off.');
 }
-
 recognition.onerror = function(event) {
   if(event.error == 'no-speech') {
     instructions.text('No speech was detected. Try again.');  
